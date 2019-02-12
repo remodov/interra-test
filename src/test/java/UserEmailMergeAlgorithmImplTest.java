@@ -143,6 +143,21 @@ public class UserEmailMergeAlgorithmImplTest {
         Assert.assertArrayEquals(prepareListForTest(mergeResult).toArray(),prepareListForTest(userListExpected).toArray());
     }
 
+    @Test
+    public void merge_list_with_many_user_and_many_emails_to_one_users() {
+        ArrayList<UserEmail> userListInput = new ArrayList<>();
+        userListInput.add(new UserEmail("user1",Arrays.asList("e1@mail.ru","e2@mail.ru")));
+        userListInput.add(new UserEmail("user2",Arrays.asList("e3@mail.ru","e4@mail.ru")));
+        userListInput.add(new UserEmail("user3",Arrays.asList("e1@mail.ru","e3@mail.ru")));
+
+        ArrayList<UserEmail> userListExpected = new ArrayList<>();
+        userListExpected.add(new UserEmail("user1", Arrays.asList("e1@mail.ru","e2@mail.ru","e3@mail.ru","e4@mail.ru")));
+
+        ArrayList<UserEmail> mergeResult = userEmailMergeAlgorithm.merge(userListInput);
+
+        Assert.assertArrayEquals(prepareListForTest(mergeResult).toArray(),prepareListForTest(userListExpected).toArray());
+    }
+
     private List<String> prepareListForTest(ArrayList<UserEmail> prepare){
         ArrayList<String> sortedResult = new ArrayList<>();
 

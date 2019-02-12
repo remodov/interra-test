@@ -5,46 +5,72 @@ import java.util.*;
 
 public class UserEmailMergeAlgorithmImpl implements UserEmailMergeAlgorithm {
 
+    class PairUserMail{
+
+        private final String user;
+        private final String email;
+
+        PairUserMail(String user, String email) {
+            this.user = user;
+            this.email = email;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public String getUser() {
+            return user;
+        }
+    }
+
     @Override
     public ArrayList<UserEmail> merge(ArrayList<UserEmail> userEmails) {
         if (userEmails == null || userEmails.isEmpty()){
             throw new MergeInterraUsersException("userEmails can not be empty!");
         }
 
-        Collections.sort(userEmails, (o1, o2) -> o2.getEmail().size() - o1.getEmail().size());
-        LinkedHashMap<String, String> userEmailList = distinctEmailsAndMergeUsers(userEmails);
-        LinkedHashMap<String, String> userEmailsList = joinEmailsByUser(userEmailList);
-        return prepareDataToReturnFormat(userEmailsList);
-    }
+        List<PairUserMail> usersEmails = new ArrayList<>();
 
-    /**
-     * Фильтруем все адреса email, если происходит перезапись по ключу, то мы нашли пользователь для слияния
-     * и дальше выполняем под ним следующие записи в карту
-     * 0(n) сложность, делаем один обход
-     * @return LinkedHashMap<String, String> - формат: email - пользователя
-     */
-    private LinkedHashMap<String, String> distinctEmailsAndMergeUsers(ArrayList<UserEmail> userEmails) {
-        LinkedHashMap<String,String> emailUserMap = new LinkedHashMap<>();
         for (UserEmail userEmail : userEmails){
-            String user = userEmail.getUser();
-            for (String email : userEmail.getEmail()) {
-                String userForMerge = emailUserMap.put(email, user);
-                if (userForMerge != null) {
-                    emailUserMap.put(email, userForMerge);
-                    user = userForMerge;
-                }
+            for (String email : userEmail.getEmail()){
+                usersEmails.add(new PairUserMail(userEmail.getUser(),email));
             }
         }
-        return emailUserMap;
+
+        Collections.sort(usersEmails, Comparator.comparing(o -> o.email+o.user));
+
+        HashMap<String,String> userEmailsMap = new HashMap<>();
+
+        String currUserForEmail = usersEmails.get(0).user;
+        String currEmail = usersEmails.get(0).email;
+
+        for (PairUserMail pairUserMail :  usersEmails){
+            String put = userEmailsMap.put(pairUserMail.email, pairUserMail.user);
+
+            if (put!=null){
+                System.out.println("Merge users->" + put + "->" + pairUserMail.user );
+                mergeRule.put(put,pairUserMail.user);
+            }
+        }
+
+        LinkedHashMap<String, String> stringStringLinkedHashMap = joinEmailsByUser(userEmailsMap);
+
+        ArrayList<UserEmail> userEmails1 = prepareDataToReturnFormat(stringStringLinkedHashMap);
+
+        ArrayList<UserEmail> userEmails2 = new ArrayList<>();
+        for (UserEmail userEmail : userEmails1){
+            String s = checkUserForMerge(userEmail.getUser());
+            userEmails2.add(new UserEmail(s,userEmail.getEmail()));
+
+        }
+
+        return userEmails2;
     }
 
-    /**
-     * Проходим и собираем все email к одному пользователю
-     * 0(n) сложность, делаем один обход
-     * @param emailUserMap - формат email - пользователя
-     * @return LinkedHashMap<String, String> - формат: пользователя - email1,email2,...
-     */
-    private LinkedHashMap<String,String> joinEmailsByUser(LinkedHashMap<String, String> emailUserMap) {
+    Map<String,String> mergeRule = new HashMap<>();
+
+    private LinkedHashMap<String,String> joinEmailsByUser(HashMap<String, String> emailUserMap) {
         LinkedHashMap<String,String> userEmailsMap = new LinkedHashMap<>();
         for (Map.Entry<String,String> entry: emailUserMap.entrySet()) {
             String userEmail = userEmailsMap.put(entry.getValue(), entry.getKey());
@@ -57,12 +83,20 @@ public class UserEmailMergeAlgorithmImpl implements UserEmailMergeAlgorithm {
         return userEmailsMap;
     }
 
-    /**
-     * Тут делаем один обход, чтобы подоготовить к выходному формату
-     * @param userEmailsMap - формат: пользователя - email1,email2,...
-     * @return ArrayList<UserEmail>  - список пользователей
-     */
-    private ArrayList<UserEmail> prepareDataToReturnFormat(LinkedHashMap<String, String> userEmailsMap) {
+    private String checkUserForMerge(String userName){
+        String mergeUser = "";
+        String currUser = userName;
+       while (mergeUser != null){
+           mergeUser = mergeRule.get(currUser);
+           if (mergeUser != null){
+               currUser = mergeUser;
+           }
+       }
+
+       return currUser;
+    }
+
+    private ArrayList<UserEmail> prepareDataToReturnFormat(HashMap<String, String> userEmailsMap) {
         ArrayList<UserEmail> resultMerge = new ArrayList<>();
         userEmailsMap.forEach((user,emails) -> resultMerge.add(new UserEmail(user, Arrays.asList(emails.split(",")))));
         return resultMerge;
