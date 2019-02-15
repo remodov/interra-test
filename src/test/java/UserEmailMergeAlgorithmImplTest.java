@@ -39,7 +39,7 @@ public class UserEmailMergeAlgorithmImplTest {
         userListInput.add(new UserEmail("user2", Arrays.asList("lol@mail.ru","xxx@ya.ru","foo@gmail.com")));
 
         ArrayList<UserEmail> userListExpected = new ArrayList<>();
-        userListExpected.add(new UserEmail("user1", Arrays.asList("lol@mail.ru","xxx@ya.ru","foo@gmail.com")));
+        userListExpected.add(new UserEmail("user2", Arrays.asList("lol@mail.ru","xxx@ya.ru","foo@gmail.com")));
 
         ArrayList<UserEmail> mergeResult = userEmailMergeAlgorithm.merge(userListInput);
 
@@ -53,7 +53,7 @@ public class UserEmailMergeAlgorithmImplTest {
         userListInput.add(new UserEmail("user2", Arrays.asList("lol@mail.ru","xxx2@ya.ru","foo3@gmail.com")));
 
         ArrayList<UserEmail> userListExpected = new ArrayList<>();
-        userListExpected.add(new UserEmail("user1", Arrays.asList("lol@mail.ru","xxx@ya.ru","foo@gmail.com","xxx2@ya.ru","foo3@gmail.com")));
+        userListExpected.add(new UserEmail("user2", Arrays.asList("lol@mail.ru","xxx@ya.ru","foo@gmail.com","xxx2@ya.ru","foo3@gmail.com")));
 
         ArrayList<UserEmail> mergeResult = userEmailMergeAlgorithm.merge(userListInput);
 
@@ -120,8 +120,8 @@ public class UserEmailMergeAlgorithmImplTest {
 
 
         ArrayList<UserEmail> userListExpected = new ArrayList<>();
-        userListExpected.add(new UserEmail("user1", Arrays.asList("aaa@bbb.ru,foo@gmail.com,lol@mail.ru,ups@pisem.net,xxx@ya.ru")));
-        userListExpected.add(new UserEmail("user3", Arrays.asList("xyz@pisem.net","vasya@pupkin.com")));
+        userListExpected.add(new UserEmail("user4", Arrays.asList("aaa@bbb.ru,foo@gmail.com,lol@mail.ru,ups@pisem.net,xxx@ya.ru")));
+        userListExpected.add(new UserEmail("user5", Arrays.asList("xyz@pisem.net","vasya@pupkin.com")));
 
         ArrayList<UserEmail> mergeResult = userEmailMergeAlgorithm.merge(userListInput);
 
@@ -151,7 +151,7 @@ public class UserEmailMergeAlgorithmImplTest {
         userListInput.add(new UserEmail("user3",Arrays.asList("e1@mail.ru","e3@mail.ru")));
 
         ArrayList<UserEmail> userListExpected = new ArrayList<>();
-        userListExpected.add(new UserEmail("user1", Arrays.asList("e1@mail.ru","e2@mail.ru","e3@mail.ru","e4@mail.ru")));
+        userListExpected.add(new UserEmail("user3", Arrays.asList("e1@mail.ru","e2@mail.ru","e3@mail.ru","e4@mail.ru")));
 
         ArrayList<UserEmail> mergeResult = userEmailMergeAlgorithm.merge(userListInput);
 
@@ -170,4 +170,3 @@ public class UserEmailMergeAlgorithmImplTest {
     }
 
 }
-
