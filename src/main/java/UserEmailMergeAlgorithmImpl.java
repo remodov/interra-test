@@ -45,9 +45,9 @@ public class UserEmailMergeAlgorithmImpl implements UserEmailMergeAlgorithm {
 
     private void prepareUserMergeRuleMap(List<PairUserMail> usersEmails) {
         for (PairUserMail pairUserMail :  usersEmails){
-            String put = userEmailsMap.put(pairUserMail.getEmail(), pairUserMail.getUser());
-            if ( put!=null && !Objects.equals(put,pairUserMail.getUser())){
-                mergeRule.put(put,pairUserMail.getUser());
+            String replacedUser = userEmailsMap.put(pairUserMail.getEmail(), pairUserMail.getUser());
+            if (replacedUser!=null && !Objects.equals(replacedUser,pairUserMail.getUser())){
+                mergeRule.put(replacedUser,pairUserMail.getUser());
             }
         }
     }
